@@ -36,5 +36,50 @@ export function useAnalytics(userId: string | undefined) {
         fetchSessions();
     }, [userId]);
 
-    return { sessions, loading, error };
+    const calculateStreak = (sessions: SessionData[]) => {
+        if (sessions.length === 0) return 0;
+
+        // Sort by date descending
+        const sortedSessions = [...sessions].sort((a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+
+        // Get unique dates (YYYY-MM-DD)
+        const uniqueDates = Array.from(new Set(sortedSessions.map(s =>
+            new Date(s.created_at).toISOString().split('T')[0]
+        )));
+
+        let streak = 0;
+        const today = new Date().toISOString().split('T')[0];
+        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+        // Check if the most recent session was today or yesterday to keep streak alive
+        if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) {
+            return 0;
+        }
+
+        // Count consecutive days
+        let currentDate = new Date(uniqueDates[0]);
+
+        for (let i = 0; i < uniqueDates.length; i++) {
+            const sessionDate = new Date(uniqueDates[i]);
+            const diffTime = Math.abs(currentDate.getTime() - sessionDate.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (i === 0) {
+                streak++;
+            } else if (diffDays === 1) {
+                streak++;
+            } else {
+                break;
+            }
+            currentDate = sessionDate;
+        }
+
+        return streak;
+    };
+
+    const streak = calculateStreak(sessions);
+
+    return { sessions, loading, error, streak };
 }

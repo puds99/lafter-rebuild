@@ -12,6 +12,7 @@ interface SessionState {
 interface SessionManagerReturn extends SessionState {
     audioDuration: number;
     audioVolume: number;
+    laughCount: number;
     startSession: (userId: string) => Promise<void>;
     pauseSession: () => void;
     resumeSession: () => void;
@@ -83,7 +84,7 @@ export function useSessionManager(): SessionManagerReturn {
                     id: state.sessionId,
                     user_id: userId,
                     duration: Math.round(recorder.duration),
-                    laugh_count: 0
+                    laugh_count: recorder.laughCount
                 });
 
             if (sessionError) throw sessionError;
@@ -139,6 +140,7 @@ export function useSessionManager(): SessionManagerReturn {
         ...state,
         audioDuration: recorder.duration,
         audioVolume: recorder.volume,
+        laughCount: recorder.laughCount,
         startSession,
         pauseSession,
         resumeSession,

@@ -16,6 +16,7 @@ interface AudioRecorderState {
     isPaused: boolean;
     duration: number;
     volume: number; // 0-100, for avatar animation
+    laughCount: number;
     error: string | null;
 }
 
@@ -62,6 +63,7 @@ export function useAudioRecorder(): AudioRecorderReturn {
         isPaused: false,
         duration: 0,
         volume: 0,
+        laughCount: 0,
         error: null,
     });
 

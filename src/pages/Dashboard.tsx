@@ -5,13 +5,18 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 export function Dashboard() {
     const { user } = useAuth();
-    const { sessions, loading } = useAnalytics(user?.id);
+    const { sessions, loading, streak } = useAnalytics(user?.id);
 
     // Format data for chart
     const chartData = sessions.map(session => ({
         date: new Date(session.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
         duration: Math.round(session.duration / 60), // in minutes
     }));
+
+    // Calculate Metrics
+    const totalLaughs = sessions.reduce((acc, session) => acc + (session.laugh_count || 0), 0);
+    const totalDurationMins = sessions.reduce((acc, session) => acc + session.duration, 0) / 60;
+    const averageLPM = totalDurationMins > 0 ? Math.round((totalLaughs / totalDurationMins) * 10) / 10 : 0;
 
     return (
         <div className="space-y-8">
@@ -33,34 +38,49 @@ export function Dashboard() {
                 </div>
             </div>
 
-            {/* Analytics Section */}
-            <div className="bg-white shadow rounded-lg overflow-hidden p-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                    Your Progress
-                </h3>
+            {/* Metrics Grid */}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="bg-white overflow-hidden shadow rounded-lg">
+                    <div className="px-4 py-5 sm:p-6">
+                        <dt className="text-sm font-medium text-gray-500 truncate">Total Sessions</dt>
+                        <dd className="mt-1 text-3xl font-semibold text-gray-900">{sessions.length}</dd>
+                    </div>
+                </div>
+                <div className="bg-white overflow-hidden shadow rounded-lg">
+                    <div className="px-4 py-5 sm:p-6">
+                        <dt className="text-sm font-medium text-gray-500 truncate">Total Laughs</dt>
+                        <dd className="mt-1 text-3xl font-semibold text-indigo-600">{totalLaughs}</dd>
+                    </div>
+                </div>
+                <div className="bg-white overflow-hidden shadow rounded-lg">
+                    <div className="px-4 py-5 sm:p-6">
+                        <dt className="text-sm font-medium text-gray-500 truncate">Avg. Laughs / Min</dt>
+                        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+                            Your Progress
+                        </h3>
 
-                {loading ? (
-                    <div className="h-64 flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                        {loading ? (
+                            <div className="h-64 flex items-center justify-center">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                            </div>
+                        ) : sessions.length > 0 ? (
+                            <div className="h-64 w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={chartData}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="date" />
+                                        <YAxis label={{ value: 'Minutes', angle: -90, position: 'insideLeft' }} />
+                                        <Tooltip />
+                                        <Bar dataKey="duration" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        ) : (
+                            <div className="text-center py-12 text-gray-500">
+                                <p>No sessions recorded yet. Start your first one to see your stats!</p>
+                            </div>
+                        )}
                     </div>
-                ) : sessions.length > 0 ? (
-                    <div className="h-64 w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={chartData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" />
-                                <YAxis label={{ value: 'Minutes', angle: -90, position: 'insideLeft' }} />
-                                <Tooltip />
-                                <Bar dataKey="duration" fill="#4f46e5" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                ) : (
-                    <div className="text-center py-12 text-gray-500">
-                        <p>No sessions recorded yet. Start your first one to see your stats!</p>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
+                </div>
+                );
 }
