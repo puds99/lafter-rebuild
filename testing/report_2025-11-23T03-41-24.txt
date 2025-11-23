@@ -1,0 +1,22 @@
+LAFTER.ORG TEST REPORT
+======================
+Date: 11/22/2025
+Time: 10:41:24 PM
+Environment: development
+
+SUMMARY
+-------
+Total Tests: ?
+Passed:      0
+Failed:      1+
+Duration:    ?
+
+DETAILS
+-------
+
+'vitest' is not recognized as an internal or external command,
+operable program or batch file.
+
+
+---------------------------------------------------------------------
+End of Report

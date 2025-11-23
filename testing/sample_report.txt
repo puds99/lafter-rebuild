@@ -1,0 +1,31 @@
+LAFTER.ORG TEST REPORT
+======================
+Date: 11/22/2025
+Time: 10:45:00 PM
+Environment: development
+
+SUMMARY
+-------
+Total Tests: 1
+Passed:      1
+Failed:      0
+Duration:    1.23s
+
+DETAILS
+-------
+> lafter-rebuild@0.0.0 test
+> vitest run
+
+ RUN  v3.0.5 /c:/Users/Jim/Desktop/pat-tools/lafter.org/lafter-rebuild
+
+ ✓ src/test/App.test.tsx (1)
+   ✓ App (1)
+     ✓ sanity check
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  22:45:00
+   Duration  1.23s (transform 45ms, setup 0ms, collect 12ms, tests 2ms, environment 0ms, prepare 56ms)
+
+---------------------------------------------------------------------
+End of Report

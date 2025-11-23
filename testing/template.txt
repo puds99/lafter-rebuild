@@ -1,0 +1,19 @@
+LAFTER.ORG TEST REPORT
+======================
+Date: {{DATE}}
+Time: {{TIME}}
+Environment: {{ENV}}
+
+SUMMARY
+-------
+Total Tests: {{TOTAL}}
+Passed:      {{PASSED}}
+Failed:      {{FAILED}}
+Duration:    {{DURATION}}
+
+DETAILS
+-------
+{{OUTPUT}}
+
+---------------------------------------------------------------------
+End of Report

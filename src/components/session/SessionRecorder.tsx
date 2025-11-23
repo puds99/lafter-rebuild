@@ -61,6 +61,32 @@ export function SessionRecorder({ userId }: SessionRecorderProps) {
                 )}
             </div>
 
+            {/* DEBUG PANEL - Shows volume level on mobile */}
+            {status === 'recording' && (
+                <div className="w-full max-w-sm bg-gray-900 rounded-lg p-3 text-white font-mono text-sm">
+                    <div className="flex justify-between items-center mb-2">
+                        <span className="text-gray-400">VOL:</span>
+                        <span className={`text-2xl font-bold ${audioVolume > 20 ? 'text-green-400' : 'text-gray-500'}`}>
+                            {audioVolume}
+                        </span>
+                        <span className="text-gray-500 text-xs">threshold: 20</span>
+                    </div>
+                    {/* Volume Bar */}
+                    <div className="h-4 bg-gray-700 rounded-full overflow-hidden relative">
+                        {/* Threshold marker */}
+                        <div className="absolute left-[20%] top-0 bottom-0 w-0.5 bg-yellow-500 z-10" />
+                        {/* Volume fill */}
+                        <div
+                            className={`h-full transition-all duration-100 ${audioVolume > 20 ? 'bg-green-500' : 'bg-gray-500'}`}
+                            style={{ width: `${Math.min(100, audioVolume)}%` }}
+                        />
+                    </div>
+                    <div className="text-center mt-2 text-xs text-gray-400">
+                        {audioVolume > 20 ? '🎤 LOUD ENOUGH!' : '🔇 speak louder...'}
+                    </div>
+                </div>
+            )}
+
             {/* Stats Row */}
             <div className="flex items-center justify-center space-x-8 w-full">
                 {/* Timer */}
