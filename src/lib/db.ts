@@ -8,6 +8,7 @@ interface PendingUpload {
         timestamp: number;
         userId: string;
         mimeType: string;
+        laughCount?: number;
     };
     created_at: number;
 }

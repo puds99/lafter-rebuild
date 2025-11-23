@@ -79,6 +79,8 @@ Goal: Modern React PWA + Supabase
 - [x] **MAINTENANCE**: GitHub Action `.github/workflows/ci.yml` (Lint & Build)
 - [x] **SOCIAL**: Twitter Share Button for Streak
 - [x] **WRAP UP**: Created `handover.md`
+- [x] **PHASE 8**: Leaderboard Component & Hook
+- [x] **DATABASE**: `LEADERBOARD_MIGRATION.sql` created
 
 
 

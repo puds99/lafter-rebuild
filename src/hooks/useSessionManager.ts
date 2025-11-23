@@ -1,7 +1,28 @@
 import { useState, useCallback } from 'react';
 import { useAudioRecorder } from './useAudioRecorder';
-import { supabase } from '../lib/supabase';
+import { supabase, DEMO_MODE } from '../lib/supabase';
 import { savePendingUpload } from '../lib/db';
+
+// Fallback UUID generator for Safari/HTTP (crypto.randomUUID not available)
+function generateUUID(): string {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+    }
+    // Fallback: use crypto.getRandomValues if available
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            const r = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
+            const v = c === 'x' ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+        });
+    }
+    // Last resort fallback
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+    });
+}
 
 interface SessionState {
     sessionId: string | null;
@@ -27,11 +48,9 @@ export function useSessionManager(): SessionManagerReturn {
         error: null,
     });
 
-    const startSession = useCallback(async (userId: string) => {
+    const startSession = useCallback(async (_userId: string) => {
         try {
-            // Generate a new session ID (UUID v4)
-            const newSessionId = crypto.randomUUID();
-
+            const newSessionId = generateUUID();
             setState(prev => ({ ...prev, status: 'recording', sessionId: newSessionId, error: null }));
             await recorder.startRecording();
         } catch (err: any) {
@@ -60,13 +79,37 @@ export function useSessionManager(): SessionManagerReturn {
             blob = await recorder.stopRecording();
             if (!blob) throw new Error('No recording data available');
 
+            // DEMO MODE: Skip Supabase, save locally only
+            if (DEMO_MODE) {
+                console.log('🎭 Demo mode: Saving session locally');
+                console.log(`   Duration: ${recorder.duration.toFixed(1)}s`);
+                console.log(`   Laughs: ${recorder.laughCount}`);
+
+                // Save to IndexedDB for demo
+                await savePendingUpload({
+                    id: state.sessionId,
+                    blob: blob,
+                    metadata: {
+                        duration: recorder.duration,
+                        timestamp: Date.now(),
+                        userId: userId,
+                        mimeType: blob.type,
+                        laughCount: recorder.laughCount
+                    },
+                    created_at: Date.now()
+                });
+
+                setState(prev => ({ ...prev, status: 'completed' }));
+                return;
+            }
+
+            // REAL MODE: Upload to Supabase
             const timestamp = Date.now();
             const mimeType = blob.type;
             const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
             const filename = `${timestamp}_recording.${extension}`;
             const storagePath = `audio-recordings/${userId}/${state.sessionId}/${filename}`;
 
-            // 1. Upload to Supabase Storage
             const { error: uploadError } = await supabase.storage
                 .from('audio-recordings')
                 .upload(storagePath, blob, {
@@ -77,7 +120,6 @@ export function useSessionManager(): SessionManagerReturn {
 
             if (uploadError) throw uploadError;
 
-            // 2. Create Session Record
             const { error: sessionError } = await supabase
                 .from('sessions')
                 .insert({
@@ -89,7 +131,6 @@ export function useSessionManager(): SessionManagerReturn {
 
             if (sessionError) throw sessionError;
 
-            // 3. Create Recording Record
             const { error: recordingError } = await supabase
                 .from('recordings')
                 .insert({
@@ -125,7 +166,7 @@ export function useSessionManager(): SessionManagerReturn {
                         status: 'offline_saved',
                         error: 'Upload failed. Saved to device.'
                     }));
-                    return; // Exit successfully if saved offline
+                    return;
                 } catch (backupErr) {
                     console.error('Offline backup failed:', backupErr);
                 }

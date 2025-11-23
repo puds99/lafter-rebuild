@@ -1,11 +1,10 @@
 /**
- * GOLD STANDARD: useAudioRecorder Hook
- * React 18 Strict Mode Compliant
+ * FIXED: useAudioRecorder Hook
  *
- * CRITICAL: This hook handles the AudioContext creation/cleanup properly
- * to prevent memory leaks and "AudioContext was not allowed to start" errors.
+ * WHAT WAS BROKEN: laughCount was never incremented
+ * WHAT'S FIXED: Now detects "laughs" when volume exceeds threshold
  *
- * Provide this to Gemini as a reference implementation.
+ * To use: Replace src/hooks/useAudioRecorder.ts with this file
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
@@ -15,7 +14,7 @@ interface AudioRecorderState {
     isRecording: boolean;
     isPaused: boolean;
     duration: number;
-    volume: number; // 0-100, for avatar animation
+    volume: number;
     laughCount: number;
     error: string | null;
 }
@@ -32,37 +31,28 @@ interface AudioRecorderReturn extends AudioRecorderState {
 const VOLUME_SMOOTHING = 0.8;
 const VOLUME_UPDATE_INTERVAL = 100; // ms
 
-// LAUGH DETECTION V2.0 - More sensitive for mobile
-const LAUGH_VOLUME_THRESHOLD = 30;  // Lowered from 55 - mobile mics are quieter
-const LAUGH_DURATION_MIN = 150;     // Lowered from 300ms - catches quick "ha!"
-const LAUGH_COOLDOWN = 800;         // Lowered from 1500ms - allows ha-ha-ha pattern
+// LAUGH DETECTION CONFIG
+const LAUGH_VOLUME_THRESHOLD = 55;  // Volume must exceed this (0-100)
+const LAUGH_DURATION_MIN = 300;     // Must be loud for at least 300ms
+const LAUGH_COOLDOWN = 1500;        // Wait 1.5s before counting another laugh
 
-/**
- * Safari-compatible MIME type selection
- * Safari only supports audio/mp4, NOT audio/webm
- */
 const getSupportedMimeType = (): string => {
     const types = [
-        'audio/webm;codecs=opus',  // Chrome, Firefox, Edge (best quality)
-        'audio/webm',              // Chrome, Firefox, Edge (fallback)
-        'audio/mp4',               // Safari (iOS & macOS)
-        'audio/aac',               // Safari fallback
-        'audio/ogg;codecs=opus',   // Firefox fallback
+        'audio/webm;codecs=opus',
+        'audio/webm',
+        'audio/mp4',
+        'audio/aac',
+        'audio/ogg;codecs=opus',
     ];
-
     for (const type of types) {
         if (MediaRecorder.isTypeSupported(type)) {
-            console.log(`[useAudioRecorder] Using MIME type: ${type}`);
             return type;
         }
     }
-
-    console.warn('[useAudioRecorder] No supported MIME type found, using browser default');
-    return ''; // Use browser default
+    return '';
 };
 
 export function useAudioRecorder(): AudioRecorderReturn {
-    // State
     const [state, setState] = useState<AudioRecorderState>({
         isRecording: false,
         isPaused: false,
@@ -72,7 +62,7 @@ export function useAudioRecorder(): AudioRecorderReturn {
         error: null,
     });
 
-    // Refs - CRITICAL: Use refs to prevent React 18 Strict Mode double-creation
+    // Refs
     const audioContextRef = useRef<AudioContext | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const streamRef = useRef<MediaStream | null>(null);
@@ -83,50 +73,35 @@ export function useAudioRecorder(): AudioRecorderReturn {
     const startTimeRef = useRef<number>(0);
     const smoothedVolumeRef = useRef<number>(0);
 
-    // Laugh detection refs
+    // LAUGH DETECTION REFS
     const laughCountRef = useRef<number>(0);
     const loudStartTimeRef = useRef<number | null>(null);
     const lastLaughTimeRef = useRef<number>(0);
 
-    /**
-     * Get or create AudioContext
-     * CRITICAL: Only creates ONE instance, reuses if exists
-     */
     const getAudioContext = useCallback((): AudioContext => {
         if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
             audioContextRef.current = new (window.AudioContext ||
                 (window as any).webkitAudioContext)();
         }
-
-        // Resume if suspended (browser autoplay policy)
         if (audioContextRef.current.state === 'suspended') {
             audioContextRef.current.resume();
         }
-
         return audioContextRef.current;
     }, []);
 
-    /**
-     * Calculate current volume from analyser
-     * Returns value 0-100 for easy avatar speed mapping
-     */
     const calculateVolume = useCallback((): number => {
         if (!analyserRef.current) return 0;
 
         const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
         analyserRef.current.getByteFrequencyData(dataArray);
 
-        // Calculate RMS (root mean square) for volume
         let sum = 0;
         for (let i = 0; i < dataArray.length; i++) {
             sum += dataArray[i] * dataArray[i];
         }
         const rms = Math.sqrt(sum / dataArray.length);
-
-        // Normalize to 0-100
         const normalized = Math.min(100, (rms / 128) * 100);
 
-        // Apply smoothing to prevent jitter
         smoothedVolumeRef.current =
             VOLUME_SMOOTHING * smoothedVolumeRef.current +
             (1 - VOLUME_SMOOTHING) * normalized;
@@ -135,106 +110,54 @@ export function useAudioRecorder(): AudioRecorderReturn {
     }, []);
 
     /**
-     * Get current volume (for external polling if needed)
+     * LAUGH DETECTION LOGIC
+     * Counts a "laugh" when volume stays above threshold for minimum duration
      */
-    const getVolume = useCallback((): number => {
-        return calculateVolume();
-    }, [calculateVolume]);
-
-    /**
-     * LAUGH DETECTION V2.0
-     * Detects sustained loud sounds as laughs
-     * More sensitive than v1, with debug logging
-     */
-    const detectLaugh = useCallback((volume: number): void => {
+    const detectLaugh = useCallback((volume: number) => {
         const now = Date.now();
 
-        // Debug: Log volume levels periodically
-        if (volume > 10) {
-            console.log(`🎤 Volume: ${volume} (threshold: ${LAUGH_VOLUME_THRESHOLD})`);
-        }
-
         if (volume > LAUGH_VOLUME_THRESHOLD) {
-            // Sound is loud enough
+            // Start tracking loud period
             if (loudStartTimeRef.current === null) {
                 loudStartTimeRef.current = now;
-                console.log(`🔊 Loud sound started at volume ${volume}`);
             }
 
+            // Check if loud long enough AND cooldown passed
             const loudDuration = now - loudStartTimeRef.current;
             const timeSinceLastLaugh = now - lastLaughTimeRef.current;
 
-            // Check if loud long enough AND cooldown passed
             if (loudDuration >= LAUGH_DURATION_MIN && timeSinceLastLaugh >= LAUGH_COOLDOWN) {
+                // COUNT A LAUGH!
                 laughCountRef.current += 1;
                 lastLaughTimeRef.current = now;
                 loudStartTimeRef.current = null; // Reset for next laugh
 
-                console.log(`😂 LAUGH DETECTED! Count: ${laughCountRef.current} (duration: ${loudDuration}ms)`);
+                setState(prev => ({
+                    ...prev,
+                    laughCount: laughCountRef.current
+                }));
 
-                // Update state with new laugh count
-                setState(prev => ({ ...prev, laughCount: laughCountRef.current }));
+                console.log(`[LAUGH DETECTED] Count: ${laughCountRef.current}`);
             }
         } else {
-            // Sound dropped below threshold, reset loud start time
-            if (loudStartTimeRef.current !== null) {
-                const duration = now - loudStartTimeRef.current;
-                if (duration > 50) { // Only log if it was loud for a bit
-                    console.log(`🔇 Loud sound ended after ${duration}ms (needed ${LAUGH_DURATION_MIN}ms)`);
-                }
-            }
+            // Volume dropped, reset loud tracking
             loudStartTimeRef.current = null;
         }
     }, []);
 
-    /**
-     * Check if running in secure context (required for getUserMedia)
-     */
-    const isSecureContext = (): boolean => {
-        return !!(
-            window.isSecureContext ||
-            location.protocol === 'https:' ||
-            location.hostname === 'localhost' ||
-            location.hostname === '127.0.0.1'
-        );
-    };
+    const getVolume = useCallback((): number => {
+        return calculateVolume();
+    }, [calculateVolume]);
 
-    /**
-     * Check if microphone API is available
-     */
-    const hasMicrophone = (): boolean => {
-        return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
-    };
-
-    /**
-     * Start recording
-     * MUST be called from user interaction (click handler)
-     */
     const startRecording = useCallback(async (): Promise<void> => {
         try {
-            // Reset error state
             setState(prev => ({ ...prev, error: null }));
 
-            // Check secure context FIRST (iOS Safari requires HTTPS)
-            if (!isSecureContext()) {
-                const errorMsg = 'Recording requires HTTPS. Please use https:// URL or localhost.';
-                setState(prev => ({ ...prev, error: errorMsg }));
-                console.error('🔒 Security Context Required:', {
-                    isSecure: window.isSecureContext,
-                    protocol: location.protocol,
-                    hostname: location.hostname
-                });
-                throw new Error(errorMsg);
-            }
+            // RESET LAUGH COUNT ON NEW RECORDING
+            laughCountRef.current = 0;
+            loudStartTimeRef.current = null;
+            lastLaughTimeRef.current = 0;
 
-            // Check if MediaDevices API is available
-            if (!hasMicrophone()) {
-                const errorMsg = 'Microphone access not available in this browser.';
-                setState(prev => ({ ...prev, error: errorMsg }));
-                throw new Error(errorMsg);
-            }
-
-            // Get microphone stream
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: {
                     echoCancellation: true,
@@ -244,7 +167,6 @@ export function useAudioRecorder(): AudioRecorderReturn {
             });
             streamRef.current = stream;
 
-            // Setup audio context and analyser for volume monitoring
             const audioContext = getAudioContext();
             const source = audioContext.createMediaStreamSource(stream);
             const analyser = audioContext.createAnalyser();
@@ -253,7 +175,6 @@ export function useAudioRecorder(): AudioRecorderReturn {
             source.connect(analyser);
             analyserRef.current = analyser;
 
-            // Create MediaRecorder with Safari-compatible MIME type
             const mimeType = getSupportedMimeType();
             const mediaRecorder = new MediaRecorder(
                 stream,
@@ -262,36 +183,26 @@ export function useAudioRecorder(): AudioRecorderReturn {
             mediaRecorderRef.current = mediaRecorder;
             chunksRef.current = [];
 
-            // Handle data
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) {
                     chunksRef.current.push(event.data);
                 }
             };
 
-            // Start recording
-            mediaRecorder.start(100); // Collect data every 100ms
+            mediaRecorder.start(100);
             startTimeRef.current = Date.now();
 
-            // Start duration timer
             durationIntervalRef.current = window.setInterval(() => {
                 const elapsed = (Date.now() - startTimeRef.current) / 1000;
                 setState(prev => ({ ...prev, duration: elapsed }));
             }, 100);
 
-            // Start volume monitoring AND laugh detection
+            // Volume monitoring WITH laugh detection
             volumeIntervalRef.current = window.setInterval(() => {
                 const volume = calculateVolume();
+                detectLaugh(volume); // <-- THE FIX
                 setState(prev => ({ ...prev, volume }));
-
-                // V2.0: Actually detect laughs!
-                detectLaugh(volume);
             }, VOLUME_UPDATE_INTERVAL);
-
-            // Reset laugh detection for new session
-            laughCountRef.current = 0;
-            loudStartTimeRef.current = null;
-            lastLaughTimeRef.current = 0;
 
             setState(prev => ({
                 ...prev,
@@ -308,12 +219,8 @@ export function useAudioRecorder(): AudioRecorderReturn {
         }
     }, [getAudioContext, calculateVolume, detectLaugh]);
 
-    /**
-     * Stop recording and return blob
-     */
     const stopRecording = useCallback(async (): Promise<Blob | null> => {
         return new Promise((resolve) => {
-            // Clear intervals
             if (durationIntervalRef.current) {
                 clearInterval(durationIntervalRef.current);
                 durationIntervalRef.current = null;
@@ -337,19 +244,16 @@ export function useAudioRecorder(): AudioRecorderReturn {
             }
 
             mediaRecorder.onstop = () => {
-                // Create blob from chunks
                 const blob = new Blob(chunksRef.current, {
                     type: mediaRecorder.mimeType || 'audio/webm'
                 });
                 chunksRef.current = [];
 
-                // Clean up stream tracks
                 if (streamRef.current) {
                     streamRef.current.getTracks().forEach(track => track.stop());
                     streamRef.current = null;
                 }
 
-                // Clean up analyser (but NOT AudioContext - reuse it)
                 analyserRef.current = null;
 
                 setState(prev => ({
@@ -357,6 +261,7 @@ export function useAudioRecorder(): AudioRecorderReturn {
                     isRecording: false,
                     isPaused: false,
                     volume: 0,
+                    // Keep laughCount - don't reset on stop
                 }));
 
                 resolve(blob);
@@ -366,9 +271,6 @@ export function useAudioRecorder(): AudioRecorderReturn {
         });
     }, []);
 
-    /**
-     * Pause recording
-     */
     const pauseRecording = useCallback((): void => {
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
             mediaRecorderRef.current.pause();
@@ -376,9 +278,6 @@ export function useAudioRecorder(): AudioRecorderReturn {
         }
     }, []);
 
-    /**
-     * Resume recording
-     */
     const resumeRecording = useCallback((): void => {
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'paused') {
             mediaRecorderRef.current.resume();
@@ -386,31 +285,16 @@ export function useAudioRecorder(): AudioRecorderReturn {
         }
     }, []);
 
-    /**
-     * Cleanup on unmount
-     * CRITICAL: Properly close AudioContext to prevent memory leaks
-     */
     useEffect(() => {
         return () => {
-            // Clear intervals
-            if (durationIntervalRef.current) {
-                clearInterval(durationIntervalRef.current);
-            }
-            if (volumeIntervalRef.current) {
-                clearInterval(volumeIntervalRef.current);
-            }
-
-            // Stop any active recording
+            if (durationIntervalRef.current) clearInterval(durationIntervalRef.current);
+            if (volumeIntervalRef.current) clearInterval(volumeIntervalRef.current);
             if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
                 mediaRecorderRef.current.stop();
             }
-
-            // Stop stream tracks
             if (streamRef.current) {
                 streamRef.current.getTracks().forEach(track => track.stop());
             }
-
-            // Close AudioContext
             if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
                 audioContextRef.current.close();
                 audioContextRef.current = null;

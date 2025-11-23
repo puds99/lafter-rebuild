@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, DEMO_MODE } from '../lib/supabase';
 
 export interface SessionData {
     id: string;
@@ -15,6 +15,13 @@ export function useAnalytics(userId: string | undefined) {
 
     useEffect(() => {
         if (!userId) return;
+
+        // DEMO MODE: Return empty sessions (user can build history locally)
+        if (DEMO_MODE) {
+            setSessions([]);
+            setLoading(false);
+            return;
+        }
 
         const fetchSessions = async () => {
             try {
