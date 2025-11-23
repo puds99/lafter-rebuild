@@ -1,0 +1,140 @@
+AGENT: Reddit Community Specialist
+RESEARCH DATE: November 23, 2025
+CONFIDENCE: 85%
+
+## EXECUTIVE SUMMARY
+Lafter.org can achieve viral growth on Reddit by positioning itself as a mental wellness tool rather than a tracking app, focusing on authentic community engagement in self-improvement and mental health subreddits, and leveraging the platform's anonymity to encourage sharing of personal happiness journeys. Reddit's 116M daily active users and hostile-to-marketing culture demands a guerrilla approach: build genuine value through educational content, participate authentically for 2+ months before any mention of the app, and focus on comment-based organic discovery rather than promotional posts.
+
+## TOP SUBREDDITS TO TARGET
+
+1. r/GetMotivated (14M+ members) - WHY: Daily inspiration seekers - APPROACH: Share data insights about laughter's impact on motivation without mentioning app initially
+2. r/DecidingToBeBetter (1.3M members) - WHY: People actively committing to change - APPROACH: Comment on posts about happiness/mood with scientific backing
+3. r/selfimprovement (2.4M members) - WHY: Main hub for goal setting and habit building - APPROACH: Weekly "Laughter Challenge" threads once established
+4. r/getdisciplined (2M members) - WHY: Focus on building habits - APPROACH: Position laughter tracking as measurable self-discipline metric
+5. r/mentalhealth - WHY: Foundation audience for wellness tools - APPROACH: Share research on laughter therapy (never diagnose/prescribe)
+6. r/Anxiety - WHY: Laughter as anxiety management tool - APPROACH: Gentle suggestions in comments about tracking positive moments
+7. r/productivity - WHY: Quantified self enthusiasts - APPROACH: Frame as productivity booster backed by neuroscience
+8. r/LifeProTips - WHY: Practical advice seekers - APPROACH: "LPT: Track your laughs to identify what truly makes you happy"
+9. r/GetMotivatedBuddies - WHY: Accountability partners - APPROACH: Suggest laugh tracking as shared goal
+10. r/SideProject - WHY: Indie app appreciation - APPROACH: Building in public posts about development journey
+11. r/InternetIsBeautiful - WHY: Unique web apps get featured - APPROACH: Submit when you have beautiful visualization feature
+
+## ZERO-EFFORT TACTICS
+
+1. **The Scientific Commenter**: Create infographics about laughter science, share in relevant threads without app mention. Bio link does the work.
+
+2. **The Data Storyteller**: "I tracked my laughs for 30 days and discovered..." posts with compelling visualizations (mention app only if asked).
+
+3. **The Helper Bot**: Monitor keywords "mood tracker" "happiness app" "track emotions" - provide helpful comparisons including Lafter naturally.
+
+4. **Cross-Platform Virality**: When something goes viral on TikTok/Twitter about laughter/happiness, be first to share on relevant subreddits.
+
+5. **AMA Goldmine**: "I'm a developer who tracks every laugh - AMA" in r/IAmA or r/casualiama after 3 months of community building.
+
+6. **The Comparison Thread**: Create comprehensive comparison of mood tracking apps in r/productivity, include Lafter honestly among Daylio, Bearable, etc.
+
+7. **Meme Momentum**: Create relatable memes about "that friend who never laughs" or "when you realize you haven't laughed in 3 days" for r/meirl.
+
+## POST TEMPLATES THAT WORK
+
+### The Data Discovery Post:
+"I tracked 1,847 laughs over 90 days and discovered my happiness patterns [OC]"
+- Include beautiful data visualization
+- Share genuine insights
+- Mention app only in comments if asked
+- Works in: r/dataisbeautiful, r/selfimprovement
+
+### The Vulnerable Share:
+"How tracking my laughter helped me realize I was in a toxic relationship"
+- Personal story first
+- Data/evidence second
+- Tool mention third (if at all)
+- Works in: r/DecidingToBeBetter, r/mentalhealth
+
+### The Science Drop:
+"Study shows laughing 15 times daily increases productivity by 23% [Research]"
+- Link to actual research
+- Explain simply
+- Suggest tracking in comments
+- Works in: r/productivity, r/GetMotivated
+
+### The Challenge Post:
+"30-Day Laughter Challenge: Who's In?"
+- Community-focused
+- No app mention initially
+- Build momentum first
+- Works in: r/GetMotivatedBuddies
+
+## CASE STUDIES
+
+**Caliber Fitness Success**: Turned Reddit ads into communities by focusing on education over promotion. Key lesson: Build trust through expertise sharing.
+
+**Mint Mobile Model**: Positioned as helpful presence in mobile discussions. Never pushed product, just answered questions. Lesson: Be genuinely helpful first.
+
+**Purple Mattress Strategy**: Monitored r/Mattress for complaints, responded helpfully even to competitors' customers. Lesson: Customer service as marketing.
+
+**Daylio's Organic Growth**: Most mentioned mood tracker on Reddit because users genuinely recommend it. Never advertises. Lesson: Product excellence drives organic sharing.
+
+**Starter Story (Pat Walls)**: Built business through consistent value-sharing in r/entrepreneur. Lesson: Building in public creates authentic following.
+
+## WHAT NOT TO DO (will get banned)
+
+- NEVER buy upvotes or use vote manipulation (now federal crime as of Fall 2024)
+- NEVER post same content across multiple subreddits simultaneously (spam flag)
+- NEVER use link shorteners or affiliate links
+- NEVER post in subreddits with 1M+ members with direct links (auto-deleted)
+- NEVER create fake testimonials or sock puppet accounts
+- NEVER ignore subreddit rules (read twice before posting)
+- NEVER be promotional in first 50 comments/posts on any account
+- NEVER argue with moderators or negative comments
+- NEVER use corporate speak or marketing language
+- NEVER post without 2+ months of authentic participation first
+
+## IMPLEMENTATION PRIORITY
+
+### Month 1: Foundation Building
+1. Create authentic Reddit account with genuine username (not company-related)
+2. Spend 30 mins daily reading and upvoting in target subreddits
+3. Make 3-5 helpful comments daily WITHOUT any app mention
+4. Build Contributor Quality Score (CQS) through consistent valuable participation
+
+### Month 2: Trust Development
+1. Start sharing laughter/happiness science articles and studies
+2. Answer questions in mental health subreddits with research backing
+3. Create first data visualization about laughter (no app mention)
+4. Identify power users and moderators in target communities
+
+### Month 3: Soft Launch
+1. Share personal story about tracking laughter journey
+2. If asked about tools, mention Lafter among other options
+3. Create comprehensive mood tracker comparison post
+4. Launch "30-Day Laughter Challenge" in r/GetMotivatedBuddies
+
+### Month 4: Amplification
+1. Host AMA about laughter tracking and mental wellness
+2. Cross-promote any viral content from other platforms
+3. Create subreddit-specific valuable content (guides, research)
+4. Begin responding to "mood tracker" keyword mentions
+
+### Month 5: Scale
+1. Recruit genuine users as ambassadors (never pay)
+2. Create r/LaughterTracking community (if momentum exists)
+3. Partner with mental health advocates for organic mentions
+4. Share major app updates as "building in public" posts
+
+## KEY SUCCESS METRICS
+- Contributor Quality Score (invisible but crucial)
+- Organic mention rate by real users
+- Upvote/downvote ratios (aim for 80%+ upvoted)
+- Comment engagement quality over quantity
+- Conversion from Reddit traffic (use UTM tracking)
+- Sentiment in comments about the app
+
+## CRITICAL NOTES
+- Reddit's algorithm heavily favors accounts with high CQS - patience required
+- Healthcare/wellness growing 48% YoY on Reddit - perfect timing
+- Platform is particularly hostile to anything feeling like marketing
+- Authenticity and value-first approach non-negotiable
+- Each subreddit is unique culture - adapt accordingly
+- Monitor with tools like KeyMentions for brand mentions
+- FTC 2024 ruling makes fake engagement federal crime - stay ethical

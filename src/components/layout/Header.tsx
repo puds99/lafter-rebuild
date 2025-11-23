@@ -5,26 +5,31 @@ export function Header() {
     const { user, signOut } = useAuth();
 
     return (
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <header className="fixed w-full top-0 z-50 glass-panel border-b-0">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
-                    <div className="flex">
-                        <Link to="/" className="flex-shrink-0 flex items-center">
-                            <span className="text-2xl font-bold text-indigo-600">Lafter.org</span>
+                    <div className="flex items-center">
+                        <Link to="/" className="flex-shrink-0 flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-stitch-primary to-stitch-secondary flex items-center justify-center">
+                                <span className="text-xl">😂</span>
+                            </div>
+                            <span className="text-2xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-stitch-accent">
+                                Lafter.org
+                            </span>
                         </Link>
                     </div>
                     <div className="flex items-center space-x-4">
                         {user ? (
                             <>
-                                <Link to="/dashboard" className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
+                                <Link to="/dashboard" className="text-stitch-muted hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
                                     Dashboard
                                 </Link>
-                                <Link to="/settings" className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
+                                <Link to="/settings" className="text-stitch-muted hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
                                     Settings
                                 </Link>
                                 <button
                                     onClick={signOut}
-                                    className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                                    className="text-stitch-muted hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
                                 >
                                     Sign Out
                                 </button>
@@ -32,7 +37,7 @@ export function Header() {
                         ) : (
                             <Link
                                 to="/login"
-                                className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                className="btn-primary"
                             >
                                 Sign In
                             </Link>

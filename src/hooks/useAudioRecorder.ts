@@ -8,6 +8,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useSettings } from '../context/SettingsContext';
+import { useYamnet } from './useYamnet';
 
 // Types
 interface AudioRecorderState {
@@ -16,6 +17,7 @@ interface AudioRecorderState {
     duration: number;
     volume: number; // 0-100, for avatar animation
     laughCount: number;
+    laughProbability: number; // 0-1
     error: string | null;
 }
 
@@ -31,7 +33,7 @@ interface AudioRecorderReturn extends AudioRecorderState {
 const VOLUME_SMOOTHING = 0.8;
 const VOLUME_UPDATE_INTERVAL = 100; // ms
 
-// LAUGH DETECTION V2.1
+// LAUGH DETECTION V3.0 (Hybrid: Volume + AI)
 const LAUGH_DURATION_MIN = 100;     // 100ms - catches any burst
 const LAUGH_COOLDOWN = 500;         // 500ms - rapid detection allowed
 
@@ -61,6 +63,7 @@ const getSupportedMimeType = (): string => {
 
 export function useAudioRecorder(): AudioRecorderReturn {
     const { settings } = useSettings();
+    const { analyzeAudio, isModelLoaded } = useYamnet();
 
     // State
     const [state, setState] = useState<AudioRecorderState>({
@@ -69,6 +72,7 @@ export function useAudioRecorder(): AudioRecorderReturn {
         duration: 0,
         volume: 0,
         laughCount: 0,
+        laughProbability: 0,
         error: null,
     });
 
@@ -142,24 +146,44 @@ export function useAudioRecorder(): AudioRecorderReturn {
     }, [calculateVolume]);
 
     /**
-     * LAUGH DETECTION V2.0
-     * Detects sustained loud sounds as laughs
-     * More sensitive than v1, with debug logging
+     * LAUGH DETECTION V3.0 (Hybrid)
+     * Detects sustained loud sounds AND uses AI model if available
      */
-    const detectLaugh = useCallback((volume: number): void => {
+    const detectLaugh = useCallback(async (volume: number): Promise<void> => {
         const now = Date.now();
         const threshold = settings.audio.threshold;
+        let isLaugh = false;
+        let probability = 0;
 
-        // Debug: Log volume levels periodically
-        if (volume > 10) {
-            // console.log(`🎤 Volume: ${volume} (threshold: ${threshold})`);
+        // 1. Volume Check (Gating)
+        // Only run AI if volume is significant to save CPU
+        if (volume > threshold) {
+            // 2. AI Check (if model loaded)
+            if (isModelLoaded && analyserRef.current) {
+                // Get audio data for AI
+                const dataArray = new Float32Array(analyserRef.current.fftSize);
+                analyserRef.current.getFloatTimeDomainData(dataArray);
+
+                // Run inference
+                probability = await analyzeAudio(dataArray);
+
+                // AI Threshold (0.3 is a reasonable start for YAMNet laughter)
+                if (probability > 0.3) {
+                    isLaugh = true;
+                }
+            } else {
+                // Fallback to simple volume-based detection
+                isLaugh = true; // If volume > threshold, assume laugh (legacy behavior)
+            }
         }
 
-        if (volume > threshold) {
-            // Sound is loud enough
+        setState(prev => ({ ...prev, laughProbability: probability }));
+
+        if (isLaugh) {
+            // Sound is loud enough AND sounds like a laugh
             if (loudStartTimeRef.current === null) {
                 loudStartTimeRef.current = now;
-                console.log(`🔊 Loud sound started at volume ${volume}`);
+                console.log(`🔊 Laugh candidate started at volume ${volume}, prob: ${probability.toFixed(2)}`);
             }
 
             const loudDuration = now - loudStartTimeRef.current;
@@ -171,22 +195,22 @@ export function useAudioRecorder(): AudioRecorderReturn {
                 lastLaughTimeRef.current = now;
                 loudStartTimeRef.current = null; // Reset for next laugh
 
-                console.log(`😂 LAUGH DETECTED! Count: ${laughCountRef.current} (duration: ${loudDuration}ms)`);
+                console.log(`😂 LAUGH DETECTED! Count: ${laughCountRef.current} (duration: ${loudDuration}ms, prob: ${probability.toFixed(2)})`);
 
                 // Update state with new laugh count
                 setState(prev => ({ ...prev, laughCount: laughCountRef.current }));
             }
         } else {
-            // Sound dropped below threshold, reset loud start time
+            // Sound dropped below threshold or AI said "not funny"
             if (loudStartTimeRef.current !== null) {
                 const duration = now - loudStartTimeRef.current;
-                if (duration > 50) { // Only log if it was loud for a bit
-                    console.log(`🔇 Loud sound ended after ${duration}ms (needed ${LAUGH_DURATION_MIN}ms)`);
+                if (duration > 50) {
+                    // console.log(`🔇 Laugh candidate ended after ${duration}ms`);
                 }
             }
             loudStartTimeRef.current = null;
         }
-    }, [settings.audio.threshold]);
+    }, [settings.audio.threshold, isModelLoaded, analyzeAudio]);
 
     /**
      * Check if running in secure context (required for getUserMedia)
@@ -249,7 +273,7 @@ export function useAudioRecorder(): AudioRecorderReturn {
             const audioContext = getAudioContext();
             const source = audioContext.createMediaStreamSource(stream);
             const analyser = audioContext.createAnalyser();
-            analyser.fftSize = 256;
+            analyser.fftSize = 1024; // Increased for better AI resolution (needs ~512+ samples)
             analyser.smoothingTimeConstant = 0.8;
             source.connect(analyser);
             analyserRef.current = analyser;
@@ -285,7 +309,7 @@ export function useAudioRecorder(): AudioRecorderReturn {
                 const volume = calculateVolume();
                 setState(prev => ({ ...prev, volume }));
 
-                // V2.0: Actually detect laughs!
+                // V3.0: Hybrid Detection
                 detectLaugh(volume);
             }, VOLUME_UPDATE_INTERVAL);
 
@@ -300,6 +324,7 @@ export function useAudioRecorder(): AudioRecorderReturn {
                 isPaused: false,
                 duration: 0,
                 laughCount: 0,
+                laughProbability: 0,
             }));
 
         } catch (error) {
@@ -332,6 +357,7 @@ export function useAudioRecorder(): AudioRecorderReturn {
                     isRecording: false,
                     isPaused: false,
                     volume: 0,
+                    laughProbability: 0,
                 }));
                 resolve(null);
                 return;
@@ -358,6 +384,7 @@ export function useAudioRecorder(): AudioRecorderReturn {
                     isRecording: false,
                     isPaused: false,
                     volume: 0,
+                    laughProbability: 0,
                 }));
 
                 resolve(blob);

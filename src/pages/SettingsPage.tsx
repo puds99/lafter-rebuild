@@ -4,7 +4,7 @@ export function SettingsPage() {
     const { settings, updateSettings, loading } = useSettings();
 
     if (loading) {
-        return <div className="p-8 text-center">Loading settings...</div>;
+        return <div className="p-8 text-center text-stitch-muted">Loading settings...</div>;
     }
 
     const handleThemeChange = (theme: 'light' | 'dark' | 'system' | 'stitch') => {
@@ -30,17 +30,19 @@ export function SettingsPage() {
     };
 
     return (
-        <div className="max-w-3xl mx-auto space-y-8">
-            <div className="bg-white shadow rounded-lg p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Appearance</h2>
+        <div className="max-w-3xl mx-auto space-y-8 pt-8">
+            <h1 className="text-3xl font-display font-bold text-white mb-8">Settings</h1>
+
+            <div className="glass-panel p-6 rounded-xl">
+                <h2 className="text-xl font-display font-bold text-white mb-6">Appearance</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {['light', 'dark', 'system', 'stitch'].map((theme) => (
                         <button
                             key={theme}
                             onClick={() => handleThemeChange(theme as any)}
-                            className={`p-4 rounded-lg border-2 capitalize ${settings.theme === theme
-                                ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                                : 'border-gray-200 hover:border-gray-300'
+                            className={`p-4 rounded-lg border transition-all duration-200 capitalize font-medium ${settings.theme === theme
+                                    ? 'border-stitch-primary bg-stitch-primary/20 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]'
+                                    : 'border-white/10 text-stitch-muted hover:border-white/30 hover:text-white hover:bg-white/5'
                                 }`}
                         >
                             {theme}
@@ -49,35 +51,38 @@ export function SettingsPage() {
                 </div>
             </div>
 
-            <div className="bg-white shadow rounded-lg p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Audio Calibration</h2>
-                <div className="space-y-6">
+            <div className="glass-panel p-6 rounded-xl">
+                <h2 className="text-xl font-display font-bold text-white mb-6">Audio Calibration</h2>
+                <div className="space-y-8">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Microphone Sensitivity (Threshold: {settings.audio.threshold})
-                        </label>
+                        <div className="flex justify-between mb-2">
+                            <label className="block text-sm font-medium text-stitch-text">
+                                Microphone Sensitivity
+                            </label>
+                            <span className="text-stitch-accent font-mono text-sm">{settings.audio.threshold}%</span>
+                        </div>
                         <input
                             type="range"
                             min="0"
                             max="100"
                             value={settings.audio.threshold}
                             onChange={(e) => handleAudioChange('threshold', parseInt(e.target.value))}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            className="w-full h-2 bg-stitch-surface rounded-lg appearance-none cursor-pointer accent-stitch-primary"
                         />
-                        <p className="mt-1 text-xs text-gray-500">
+                        <p className="mt-2 text-xs text-stitch-muted">
                             Lower = More Sensitive (Detects quiet laughs). Higher = Less Sensitive (Ignores noise).
                         </p>
                     </div>
 
                     <div className="flex items-center justify-between">
                         <span className="flex-grow flex flex-col">
-                            <span className="text-sm font-medium text-gray-900">Noise Suppression</span>
-                            <span className="text-sm text-gray-500">Reduce background noise</span>
+                            <span className="text-sm font-medium text-stitch-text">Noise Suppression</span>
+                            <span className="text-sm text-stitch-muted">Reduce background noise</span>
                         </span>
                         <button
                             onClick={() => handleAudioChange('noiseSuppression', !settings.audio.noiseSuppression)}
-                            className={`${settings.audio.noiseSuppression ? 'bg-indigo-600' : 'bg-gray-200'
-                                } relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+                            className={`${settings.audio.noiseSuppression ? 'bg-stitch-primary' : 'bg-stitch-surface'
+                                } relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stitch-primary`}
                         >
                             <span
                                 aria-hidden="true"
@@ -89,17 +94,17 @@ export function SettingsPage() {
                 </div>
             </div>
 
-            <div className="bg-white shadow rounded-lg p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Privacy</h2>
+            <div className="glass-panel p-6 rounded-xl">
+                <h2 className="text-xl font-display font-bold text-white mb-6">Privacy</h2>
                 <div className="flex items-center justify-between">
                     <span className="flex-grow flex flex-col">
-                        <span className="text-sm font-medium text-gray-900">Public Leaderboard</span>
-                        <span className="text-sm text-gray-500">Show my streak on the global leaderboard</span>
+                        <span className="text-sm font-medium text-stitch-text">Public Leaderboard</span>
+                        <span className="text-sm text-stitch-muted">Show my streak on the global leaderboard</span>
                     </span>
                     <button
                         onClick={() => handlePrivacyChange('publicLeaderboard', !settings.privacy.publicLeaderboard)}
-                        className={`${settings.privacy.publicLeaderboard ? 'bg-indigo-600' : 'bg-gray-200'
-                            } relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+                        className={`${settings.privacy.publicLeaderboard ? 'bg-stitch-primary' : 'bg-stitch-surface'
+                            } relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stitch-primary`}
                     >
                         <span
                             aria-hidden="true"

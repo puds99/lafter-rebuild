@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.84.0",
+    "@tensorflow/tfjs": "^4.22.0",
     "clsx": "^2.1.1",
     "idb": "^8.0.3",
     "lottie-react": "^2.4.1",
