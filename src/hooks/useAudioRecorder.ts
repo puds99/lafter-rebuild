@@ -4,11 +4,10 @@
  *
  * CRITICAL: This hook handles the AudioContext creation/cleanup properly
  * to prevent memory leaks and "AudioContext was not allowed to start" errors.
- *
- * Provide this to Gemini as a reference implementation.
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useSettings } from '../context/SettingsContext';
 
 // Types
 interface AudioRecorderState {
@@ -32,8 +31,7 @@ interface AudioRecorderReturn extends AudioRecorderState {
 const VOLUME_SMOOTHING = 0.8;
 const VOLUME_UPDATE_INTERVAL = 100; // ms
 
-// LAUGH DETECTION V2.1 - ULTRA sensitive for mobile testing
-const LAUGH_VOLUME_THRESHOLD = 20;  // Very low - will over-detect but proves it works
+// LAUGH DETECTION V2.1
 const LAUGH_DURATION_MIN = 100;     // 100ms - catches any burst
 const LAUGH_COOLDOWN = 500;         // 500ms - rapid detection allowed
 
@@ -62,6 +60,8 @@ const getSupportedMimeType = (): string => {
 };
 
 export function useAudioRecorder(): AudioRecorderReturn {
+    const { settings } = useSettings();
+
     // State
     const [state, setState] = useState<AudioRecorderState>({
         isRecording: false,
@@ -108,27 +108,23 @@ export function useAudioRecorder(): AudioRecorderReturn {
 
     /**
      * Calculate current volume from analyser
-     * V2.1: Uses TIME DOMAIN data (amplitude) not frequency data
      * Returns value 0-100 for easy avatar speed mapping
      */
     const calculateVolume = useCallback((): number => {
         if (!analyserRef.current) return 0;
 
-        // V2.1 FIX: Use getByteTimeDomainData for actual amplitude!
-        const dataArray = new Uint8Array(analyserRef.current.fftSize);
-        analyserRef.current.getByteTimeDomainData(dataArray);
+        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+        analyserRef.current.getByteFrequencyData(dataArray);
 
-        // Calculate peak amplitude (deviation from 128 center)
-        let maxDeviation = 0;
+        // Calculate RMS (root mean square) for volume
+        let sum = 0;
         for (let i = 0; i < dataArray.length; i++) {
-            const deviation = Math.abs(dataArray[i] - 128);
-            if (deviation > maxDeviation) {
-                maxDeviation = deviation;
-            }
+            sum += dataArray[i] * dataArray[i];
         }
+        const rms = Math.sqrt(sum / dataArray.length);
 
-        // Normalize to 0-100 (128 max deviation = 100%)
-        const normalized = Math.min(100, (maxDeviation / 128) * 100);
+        // Normalize to 0-100
+        const normalized = Math.min(100, (rms / 128) * 100);
 
         // Apply smoothing to prevent jitter
         smoothedVolumeRef.current =
@@ -152,13 +148,14 @@ export function useAudioRecorder(): AudioRecorderReturn {
      */
     const detectLaugh = useCallback((volume: number): void => {
         const now = Date.now();
+        const threshold = settings.audio.threshold;
 
         // Debug: Log volume levels periodically
         if (volume > 10) {
-            console.log(`🎤 Volume: ${volume} (threshold: ${LAUGH_VOLUME_THRESHOLD})`);
+            // console.log(`🎤 Volume: ${volume} (threshold: ${threshold})`);
         }
 
-        if (volume > LAUGH_VOLUME_THRESHOLD) {
+        if (volume > threshold) {
             // Sound is loud enough
             if (loudStartTimeRef.current === null) {
                 loudStartTimeRef.current = now;
@@ -189,7 +186,7 @@ export function useAudioRecorder(): AudioRecorderReturn {
             }
             loudStartTimeRef.current = null;
         }
-    }, []);
+    }, [settings.audio.threshold]);
 
     /**
      * Check if running in secure context (required for getUserMedia)

@@ -19,6 +19,9 @@ export function Header() {
                                 <Link to="/dashboard" className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
                                     Dashboard
                                 </Link>
+                                <Link to="/settings" className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
+                                    Settings
+                                </Link>
                                 <button
                                     onClick={signOut}
                                     className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"

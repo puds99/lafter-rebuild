@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 
@@ -10,8 +10,8 @@ export default defineConfig({
     basicSsl() // Auto-generates self-signed certificate for HTTPS
   ],
   server: {
-    https: true, // REQUIRED for iPhone mic access
-    host: true,  // Expose to network
+
+    host: '0.0.0.0',  // Expose to network
     port: 5173
   },
   test: {
