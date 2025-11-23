@@ -1,0 +1,319 @@
+# SEMANTIC VERSIONING GUIDE FOR LAFTER.ORG
+# How to properly version releases and maintain the VERSION.txt file
+
+================================================================================
+VERSIONING SCHEME: Semantic Versioning 2.0.0
+================================================================================
+
+FORMAT: MAJOR.MINOR.PATCH-label
+
+COMPONENTS:
+  MAJOR = Incompatible API changes, architectural rewrites
+  MINOR = New features, backward-compatible additions
+  PATCH = Bug fixes, performance improvements, minor tweaks
+  label = Pre-release identifier (alpha, beta, rc)
+
+EXAMPLES:
+  v0.10.0-beta  ← Current version (Phase 10, beta stage)
+  v0.10.1-beta  ← Hotfix for v0.10.0
+  v0.11.0-beta  ← Next feature release (Phase 11)
+  v1.0.0-rc.1   ← Release candidate for v1.0
+  v1.0.0        ← Stable production release
+  v1.1.0        ← Minor update to v1.0 (new feature)
+  v2.0.0        ← Major breaking change
+
+================================================================================
+VERSION BUMPING RULES
+================================================================================
+
+WHEN TO INCREMENT MAJOR (X.0.0):
+  • Breaking API changes (e.g., remove old endpoints)
+  • Database schema changes requiring migration
+  • Incompatible with previous versions
+  • UI/UX complete overhaul (e.g., v2.0 redesign)
+
+  EXAMPLE: Moving from v0.x.x → v1.0.0 (beta to stable)
+
+WHEN TO INCREMENT MINOR (0.X.0):
+  • New features added
+  • New API endpoints
+  • New database tables (additive, not breaking)
+  • Major UI components added
+
+  EXAMPLE: Phase 11 (Auto-Curation) = v0.10.0 → v0.11.0
+
+WHEN TO INCREMENT PATCH (0.0.X):
+  • Bug fixes
+  • Performance optimizations
+  • Security patches
+  • Dependency updates (non-breaking)
+  • Documentation improvements
+
+  EXAMPLE: Fix Safari audio bug = v0.10.0 → v0.10.1
+
+PRE-RELEASE LABELS:
+  -alpha    = Early development, unstable, no guarantees
+  -beta     = Feature-complete, testing phase, may have bugs
+  -rc.1     = Release candidate (final testing before stable)
+  (none)    = Stable production release
+
+  PROGRESSION: alpha → beta → rc → stable
+
+================================================================================
+VERSION UPDATE WORKFLOW
+================================================================================
+
+MANUAL PROCESS (Current):
+  1. Decide version number based on change type (above rules)
+  2. Update VERSION.txt with new number
+  3. Update CHANGELOG.txt with release notes
+  4. Update package.json "version" field to match
+  5. Commit changes: git commit -m "chore: Bump version to vX.Y.Z"
+  6. Create Git tag: git tag vX.Y.Z
+  7. Push with tags: git push origin main --tags
+  8. Trigger deployment (Vercel auto-deploys on tag push)
+
+AUTOMATED PROCESS (Future):
+  Create npm scripts to automate version bumping:
+
+  ```json
+  // package.json
+  {
+    "scripts": {
+      "version:patch": "node scripts/bump-version.js patch",
+      "version:minor": "node scripts/bump-version.js minor",
+      "version:major": "node scripts/bump-version.js major"
+    }
+  }
+  ```
+
+  Usage:
+    npm run version:patch  # v0.10.0 → v0.10.1
+    npm run version:minor  # v0.10.0 → v0.11.0
+    npm run version:major  # v0.10.0 → v1.0.0
+
+  Script will:
+    - Read VERSION.txt
+    - Increment appropriate number
+    - Update VERSION.txt, package.json, CHANGELOG.txt
+    - Create Git commit + tag
+    - Push to remote
+
+================================================================================
+VERSION DISPLAY IN APP
+================================================================================
+
+IMPLEMENTATION:
+  1. Create src/version.ts:
+     ```typescript
+     // Auto-generated during build, DO NOT EDIT MANUALLY
+     export const APP_VERSION = '0.10.0-beta';
+     export const BUILD_DATE = '2023-11-23T14:00:00Z';
+     export const GIT_COMMIT = 'd8a0dd0';
+     ```
+
+  2. Display in UI (Settings page footer):
+     ```tsx
+     import { APP_VERSION } from '../version';
+     
+     <footer className="text-xs text-stitch-muted">
+       Lafter.org v{APP_VERSION} • Built {BUILD_DATE}
+       <a href={`https://github.com/user/repo/commit/${GIT_COMMIT}`}>
+         (commit {GIT_COMMIT.slice(0, 7)})
+       </a>
+     </footer>
+     ```
+
+BENEFITS:
+  • Users can report "bug in v0.10.1" instead of vague "latest version"
+  • Developers can verify deployed version matches expected
+  • Support team can troubleshoot version-specific issues
+
+================================================================================
+GIT TAGGING CONVENTIONS
+================================================================================
+
+TAG FORMAT: vX.Y.Z-label
+
+EXAMPLES:
+  git tag v0.10.0-beta -m "Phase 10: Laugh Starter feature"
+  git tag v1.0.0 -m "Stable release: Lafter 1.0"
+
+ANNOTATED TAGS (Recommended):
+  git tag -a v0.10.0-beta -m "Phase 10: Laugh Starter"
+  
+  Why annotated?
+    - Stores tagger name, email, date
+    - Can include longer message (changelog excerpt)
+    - Required for some CI/CD pipelines
+
+LIST TAGS:
+  git tag                    # List all tags
+  git tag -l "v0.10.*"       # Filter tags
+
+DELETE TAG:
+  git tag -d v0.10.0-beta              # Local
+  git push origin :refs/tags/v0.10.0-beta  # Remote
+
+================================================================================
+CHANGELOG MAINTENANCE
+================================================================================
+
+WHEN TO UPDATE:
+  • After every version bump (MAJOR, MINOR, PATCH)
+  • Before creating Git tag
+  • Before deployment
+
+TEMPLATE FOR NEW RELEASE:
+  ```
+  ---
+  [vX.Y.Z-label] - YYYY-MM-DD - "Release Name"
+  ---
+  NEW FEATURES:
+    • Feature 1 description
+    • Feature 2 description
+
+  IMPROVEMENTS:
+    • Performance boost: 20% faster load time
+    • UI polish: Updated button styles
+
+  BUG FIXES:
+    • Fixed Safari audio recording issue (#42)
+    • Fixed login redirect loop (#38)
+
+  TECHNICAL:
+    • Upgraded dependency X to vY
+    • Refactored service Z for maintainability
+
+  BREAKING CHANGES:
+    ⚠️ API endpoint /old-path removed, use /new-path instead
+
+  BUILD STATUS: ✅ Passed
+  DEPLOYMENT: ✅ GitHub (commit: abc123)
+  ```
+
+REVERSE CHRONOLOGICAL ORDER:
+  Most recent version at the top, oldest at the bottom.
+  Makes it easy to see "what's new" without scrolling.
+
+================================================================================
+PACKAGE.JSON SYNC
+================================================================================
+
+KEEP IN SYNC:
+  VERSION.txt:    0.10.0-beta
+  package.json:   "version": "0.10.0-beta"
+  CHANGELOG.txt:  [v0.10.0-beta] - 2023-11-23
+
+AUTO-SYNC SCRIPT (Future):
+  ```javascript
+  // scripts/sync-version.js
+  const fs = require('fs');
+  const version = fs.readFileSync('VERSION.txt', 'utf-8').trim();
+  const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+  pkg.version = version;
+  fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+  console.log(`✅ Synced package.json to v${version}`);
+  ```
+
+  Run before every commit:
+    node scripts/sync-version.js
+
+================================================================================
+DEPRECATION POLICY
+================================================================================
+
+WHEN TO DEPRECATE:
+  • Feature is buggy and unfixable
+  • Feature replaced by better alternative
+  • Feature has <1% usage (analytics confirm)
+
+DEPRECATION PROCESS:
+  1. Mark as deprecated in CHANGELOG (current version)
+     Example: "⚠️ DEPRECATED: Feature X will be removed in v2.0"
+  
+  2. Show in-app warning (at least 1 MINOR version before removal)
+     Example: UI banner: "Feature X is deprecated, use Y instead"
+  
+  3. Remove in next MAJOR version
+     Example: v1.9.0 (deprecated) → v2.0.0 (removed)
+  
+  4. Document migration path in CHANGELOG
+     Example: "MIGRATION: Replace api.old() with api.new()"
+
+================================================================================
+HOTFIX WORKFLOW
+================================================================================
+
+SCENARIO: Critical bug found in production (v0.10.0-beta)
+
+PROCESS:
+  1. Branch from tag: git checkout -b hotfix/critical-bug v0.10.0-beta
+  2. Fix bug, test thoroughly
+  3. Bump PATCH version: 0.10.0 → 0.10.1
+  4. Update CHANGELOG.txt with [v0.10.1-beta] entry
+  5. Commit: git commit -m "fix: Critical bug in audio recorder"
+  6. Tag: git tag v0.10.1-beta
+  7. Merge to main: git checkout main && git merge hotfix/critical-bug
+  8. Push with tag: git push origin main --tags
+  9. Deploy immediately (Vercel auto-deploys on tag)
+
+HOTFIX CHANGELOG ENTRY:
+  ```
+  [v0.10.1-beta] - 2023-11-23 - "Hotfix: Audio Recorder"
+  BUG FIXES:
+    • Fixed critical: Audio recorder crashes on Safari 16 (#89)
+  
+  BUILD STATUS: ✅ Passed
+  DEPLOYMENT: ✅ Emergency hotfix deployed 14:30 EST
+  ```
+
+================================================================================
+VERSION HISTORY ARCHIVAL
+================================================================================
+
+ONCE v1.0 IS RELEASED:
+  1. Create CHANGELOG_v0.txt (archive all 0.x.x versions)
+  2. Start fresh CHANGELOG.txt for v1.x.x onward
+  3. Keep VERSION.txt as single source of truth
+
+STRUCTURE:
+  /docs
+    /changelogs
+      CHANGELOG_v0.txt    (0.1.0 - 0.20.0)
+      CHANGELOG_v1.txt    (1.0.0 - 1.99.0)
+      CHANGELOG_v2.txt    (2.0.0 - current)
+
+BENEFITS:
+  • Faster CHANGELOG.txt parsing (smaller file)
+  • Historical versions still accessible
+  • Clear delineation between major eras
+
+================================================================================
+QUESTIONS & EDGE CASES
+================================================================================
+
+Q: What if I want to skip a version number?
+A: Don't. Semantic Versioning is linear. If v0.11.0 was a bad release,
+   fix it with v0.11.1, don't jump to v0.12.0.
+
+Q: Can I have multiple labels? (e.g., v1.0.0-beta.2)
+A: Yes. Format: v1.0.0-beta.2 (second beta release before stable)
+
+Q: Do I need to update VERSION.txt for every commit?
+A: No. Only bump version when creating an official release (tag).
+
+Q: What if package.json and VERSION.txt get out of sync?
+A: Run `node scripts/sync-version.js` (when created) or manually fix.
+   CI/CD should fail if they don't match (future enhancement).
+
+Q: Should I version the database separately?
+A: For now, no. Database changes are tied to app versions.
+   In v2.0+, consider separate API versioning (e.g., api.lafter.org/v2).
+
+================================================================================
+END OF VERSIONING GUIDE
+================================================================================
+
+For questions or suggestions, update this document via pull request.
+Last Updated: 2023-11-23

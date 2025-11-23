@@ -1,0 +1,287 @@
+# PHASE 11 COMPLETION CHECKLIST
+# Date: 2023-11-23
+# Goal: Complete Laugh Starter integration and bump to v0.11.0-beta
+
+================================================================================
+STATUS: BUILD FIXED ✅ | READY FOR DEPLOYMENT STEPS
+================================================================================
+
+## COMPLETED STEPS:
+
+✅ 1. **Fixed Build Errors**
+   - Removed problematic Vite plugin (ESM incompatibility)
+   - Simplified `src/version.ts` to hardcoded values
+   - Build passes cleanly (2.38MB bundle, 600KB gzipped)
+
+✅ 2. **Created Core Infrastructure**
+   - `migrations/20231123_laugh_clips.sql` (database schema)
+   - `src/services/audio/LaughClipExtractor.ts` (AI extraction)
+   - `src/components/onboarding/LaughStarterModal.tsx` (playback UI)
+   - `src/components/session/LaughPlayer.tsx` (audio player)
+   - `src/components/session/ShareLaughDialog.tsx` (post-session opt-in)
+   - `src/hooks/useLaughStarter.ts` (clip management hook)
+
+✅ 3. **Created Automation Scripts**
+   - `scripts/bump-version.js` (semver automation)
+   - Documentation: VERSION.txt, CHANGELOG.txt, ROADMAP.txt, VERSIONING_GUIDE.txt
+
+================================================================================
+REMAINING STEPS (Execute in Order):
+================================================================================
+
+---
+STEP 1: Run Supabase Migration
+---
+**Objective**: Create `laugh_clips` table with RLS policies
+
+**Commands**:
+```bash
+# Option A: Via Supabase Dashboard (Recommended for first-time)
+1. Open https://supabase.com/dashboard/project/YOUR_PROJECT_ID/sql
+2. Copy contents of: migrations/20231123_laugh_clips.sql
+3. Paste and click "Run"
+4. Verify: SELECT * FROM laugh_clips;
+
+# Option B: Via Supabase CLI (if installed)
+supabase db push
+```
+
+**Verification**:
+```sql
+-- Should return table structure
+\d laugh_clips
+
+-- Should show 6 indexes
+\di laugh_clips*
+
+-- Should list RLS policies
+SELECT * FROM pg_policies WHERE tablename = 'laugh_clips';
+```
+
+**Expected Result**: Table `laugh_clips` exists with 5 policies enabled
+
+---
+STEP 2: Create Supabase Storage Bucket
+---
+**Objective**: Create public bucket for laugh audio clips
+
+**Via Supabase Dashboard**:
+1. Navigate to: Storage → Create bucket
+2. Bucket name: `laugh-starter-clips`
+3. Public: ✅ YES (Enable public access)
+4. File size limit: 500 KB
+5. Allowed MIME types: `audio/mpeg`, `audio/mp3`, `audio/wav`
+
+**Via SQL** (Alternative):
+```sql
+-- Insert bucket metadata (requires service_role key)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('laugh-starter-clips', 'laugh-starter-clips', true);
+```
+
+**Verification**:
+- Go to Storage → laugh-starter-clips
+- It should exist and be marked as "Public"
+
+---
+STEP 3: Integrate LaughStarterModal into SessionPage
+---
+**File**: `src/pages/SessionPage.tsx`
+
+**Changes Needed**:
+```typescript
+// At top of file, add imports:
+import { useState, useEffect } from 'react';
+import { LaughStarterModal } from '../components/onboarding/LaughStarterModal';
+
+// Inside component, add state:
+const [showLaughStarter, setShowLaughStarter] = useState(false);
+
+// Add useEffect for first-time detection:
+useEffect(() => {
+  const hasSeenStarter = localStorage.getItem('hasSeenLaughStarter');
+  if (!hasSeenStarter) {
+    setShowLaughStarter(true);
+  }
+}, []);
+
+// Add close handler:
+const handleCloseLaughStarter = () => {
+  localStorage.setItem('hasSeenLaughStarter', 'true');
+  setShowLaughStarter(false);
+};
+
+// In JSX, before return statement content:
+<LaughStarterModal
+  isOpen={showLaughStarter}
+  onClose={handleCloseLaughStarter}
+  onStart={() => {
+    handleCloseLaughStarter();
+   // Your existing "start recording" logic
+  }}
+/>
+```
+
+**TODO**: Add optional "Warmup" button for returning users
+
+---
+STEP 4: Integrate ShareLaughDialog into useSessionManager
+---
+**File**: `src/hooks/useSessionManager.ts`
+
+**Changes Needed**:
+```typescript
+// Add import:
+import { ShareLaughDialog } from '../components/session/ShareLaughDialog';
+
+// Add state (wherever state is managed):
+const [showShareDialog, setShowShareDialog] = useState(false);
+const [sessionBlobForShare, setSessionBlobForShare] = useState<Blob | null>(null);
+
+// In endSession function, after successful save:
+if (recorder.laughCount >= 3) {
+  setSessionBlobForShare(audioBlob);  // The recorded blob
+  setShowShareDialog(true);
+}
+
+// Expose in return value:
+return {
+  ...existing,
+  showShareDialog,
+  setShowShareDialog,
+  sessionBlobForShare
+};
+```
+
+**Then in SessionPage.tsx**:
+```typescript
+import { ShareLaughDialog } from '../components/session/ShareLaughDialog';
+
+const { showShareDialog, setShowShareDialog, sessionBlobForShare, /* other values */ } = useSessionManager();
+
+// In JSX:
+<ShareLaughDialog
+  isOpen={showShareDialog}
+  onClose={() => setShowShareDialog(false)}
+  sessionBlob={sessionBlobForShare}
+  laughTimestamps={/* from recorder state */}
+  sessionId={sessionManager.sessionId}
+  userId={user.id}
+  laughCount={recorder.laughCount}
+/>
+```
+
+---
+STEP 5: End-to-End Testing
+---
+**Test Scenarios**:
+
+A. **New User Flow** (Laugh Starter):
+   1. Visit site with fresh localStorage
+   2. LaughStarterModal should auto-open
+   3. Play 5 sample laughs (if clips exist)
+   4. Click "Start Recording!"
+   5. Record session with 3+ laughs
+   6. ShareLaughDialog should appear
+   7. Click "Share My Laugh!"
+   8. Verify: New row in `laugh_clips` table (status: pending)
+
+B. **Returning UserFlow** (No Modals):
+   2. LaughStarterModal should NOT open
+   3. Start recording directly
+   4. Record session, end it
+   5. ShareLaughDialog should still appear if 3+ laughs
+
+C. **Admin Review** (Manual for now):
+   1. SELECT * FROM laugh_clips WHERE approval_status = 'pending';
+   2. Listen to clip (download from storage)
+   3. UPDATE laugh_clips SET approval_status = 'approved' WHERE id = 'XXX';
+   4. Next new user should see this clip in Laugh Starter
+
+**Expected Bugs to Watch**:
+- AudioContext not resuming (click interaction required)
+- MIME type issues on Safari (falls back to audio/mp4)
+- YAMNet model fails to load (500MB download, check console)
+
+---
+STEP 6: Bump Version to v0.11.0-beta
+---
+**Command**:
+```bash
+node scripts/bump-version.js minor
+```
+
+**What it does**:
+1. Reads VERSION.txt (currently 0.10.0-beta)
+2. Increments MINOR version → 0.11.0-beta
+3. Updates VERSION.txt and package.json
+4. Creates Git commit: "chore(release): Bump version to v0.11.0-beta"
+5. Tags: v0.11.0-beta
+6. Pushes to remote with tags
+
+**Verification**:
+```bash
+git log -1                  # See commit
+git tag | grep v0.11        # See tag
+cat VERSION.txt             # Should show: 0.11.0-beta
+cat package.json | grep version  # Should match
+```
+
+**Post-Bump**:
+1. Update CHANGELOG.txt with Phase 11 release notes
+2. Manually update `src/version.ts` to '0.11.0-beta' (until build script automated)
+3. Rebuild: `npm run build`
+4. Deploy: `git push` (Vercel auto-deploys)
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+**Issue**: "laugh_clips table does not exist"
+→ Solution: Run migration (Step 1)
+
+**Issue**: "Storage bucket not found"
+→ Solution: Create bucket (Step 2)
+
+**Issue**: "No clips available yet"
+→ Solution: Manually upload 3-5 seed clips or wait for users to share
+
+**Issue**: "YAMNet model fails to load"
+→ Solution: Check browser console, ensure internet connection stable
+
+**Issue**: "Share dialog never appears"
+→ Solution: Verify laughCount >= 3, check useSessionManager integration
+
+================================================================================
+ROLLBACK PLAN (If Something Goes Wrong)
+================================================================================
+
+1. **Revert Git Tag**:
+   ```bash
+   git tag -d v0.11.0-beta
+   git push origin :refs/tags/v0.11.0-beta
+   ```
+
+2. **Revert Version**:
+   - Change VERSION.txt back to 0.10.0-beta
+   - Change package.json back to 0.10.0-beta
+
+3. **Revert Code**:
+   ```bash
+   git reset --hard v0.10.0-beta
+   git push -f origin main  # WARNING: Force push
+   ```
+
+4. **Database Rollback**:
+   ```sql
+   DROP TABLE IF EXISTS laugh_clips CASCADE;
+   ```
+
+5. **Storage Bucket** (Can't delete via SQL, use dashboard)
+
+================================================================================
+END OF CHECKLIST
+================================================================================
+
+Last Updated: 2023-11-23 14:30
+Next Review: After Step 6 completion

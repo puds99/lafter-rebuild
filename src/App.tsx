@@ -9,7 +9,19 @@ import { Dashboard } from './pages/Dashboard';
 import { SessionPage } from './pages/SessionPage';
 import { SettingsPage } from './pages/SettingsPage';
 
+import { useEffect } from 'react';
+import { AutoCurator } from './services/curation/AutoCurator';
+
 function App() {
+  // Run Auto-Curation on startup
+  useEffect(() => {
+    AutoCurator.getInstance().runAutoCuration()
+      .then(count => {
+        if (count > 0) console.log(`✨ Auto-approved ${count} new laughs!`);
+      })
+      .catch(err => console.error('Auto-curation failed:', err));
+  }, []);
+
   return (
     <ErrorBoundary>
       <AuthProvider>

@@ -4,9 +4,16 @@ import { LottieAvatar } from './LottieAvatar';
 
 interface SessionRecorderProps {
     userId: string;
+    onSessionComplete?: (data: {
+        sessionBlob: Blob | null;
+        laughTimestamps: Array<{ time: number; duration: number }>;
+        sessionId: string;
+        laughCount: number;
+        yamnetScore?: number;
+    }) => void;
 }
 
-export function SessionRecorder({ userId }: SessionRecorderProps) {
+export function SessionRecorder({ userId, onSessionComplete }: SessionRecorderProps) {
     const {
         status,
         audioDuration,
@@ -30,6 +37,25 @@ export function SessionRecorder({ userId }: SessionRecorderProps) {
             return () => clearTimeout(timer);
         }
     }, [laughCount]);
+
+    // Trigger callback when session completes
+    const prevStatusRef = useRef(status);
+    useEffect(() => {
+        // Detect transition to 'completed' status
+        if (status === 'completed' && prevStatusRef.current !== 'completed' && onSessionComplete) {
+            // Note: We don't have access to the actual blob/timestamps from useSessionManager currently
+            // This is a limitation - for now call with minimal data
+            // TODO: Modify useSessionManager to expose sessionData
+            onSessionComplete({
+                sessionBlob: null, // Not available yet - needs useSessionManager refactor
+                laughTimestamps: [], // Not available yet
+                sessionId: '', // Not available yet
+                laughCount: laughCount,
+                yamnetScore: undefined
+            });
+        }
+        prevStatusRef.current = status;
+    }, [status, onSessionComplete, laughCount]);
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);

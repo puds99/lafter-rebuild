@@ -1,4 +1,5 @@
 import { useSettings } from '../context/SettingsContext';
+import { APP_VERSION, BUILD_DATE, GIT_COMMIT } from '../version';
 
 export function SettingsPage() {
     const { settings, updateSettings, loading } = useSettings();
@@ -29,8 +30,20 @@ export function SettingsPage() {
         });
     };
 
+    const formatBuildDate = (isoDate: string) => {
+        try {
+            return new Date(isoDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        } catch {
+            return isoDate;
+        }
+    };
+
     return (
-        <div className="max-w-3xl mx-auto space-y-8 pt-8">
+        <div className="max-w-3xl mx-auto space-y-8 pt-8 pb-12">
             <h1 className="text-3xl font-display font-bold text-white mb-8">Settings</h1>
 
             <div className="glass-panel p-6 rounded-xl">
@@ -41,8 +54,8 @@ export function SettingsPage() {
                             key={theme}
                             onClick={() => handleThemeChange(theme as any)}
                             className={`p-4 rounded-lg border transition-all duration-200 capitalize font-medium ${settings.theme === theme
-                                    ? 'border-stitch-primary bg-stitch-primary/20 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]'
-                                    : 'border-white/10 text-stitch-muted hover:border-white/30 hover:text-white hover:bg-white/5'
+                                ? 'border-stitch-primary bg-stitch-primary/20 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]'
+                                : 'border-white/10 text-stitch-muted hover:border-white/30 hover:text-white hover:bg-white/5'
                                 }`}
                         >
                             {theme}
@@ -112,6 +125,26 @@ export function SettingsPage() {
                                 } pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200`}
                         />
                     </button>
+                </div>
+            </div>
+
+            {/* Version Info Footer */}
+            <div className="text-center text-xs text-stitch-muted space-y-1 pt-4 border-t border-white/5">
+                <div>
+                    <span className="font-semibold text-stitch-text">Lafter.org</span> v{APP_VERSION}
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                    <span>Built {formatBuildDate(BUILD_DATE)}</span>
+                    <span>•</span>
+                    <a
+                        href={`https://github.com/puds99/lafter-rebuild/commit/${GIT_COMMIT}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-stitch-accent hover:text-stitch-primary transition-colors underline decoration-dotted"
+                        title="View commit on GitHub"
+                    >
+                        {GIT_COMMIT.substring(0, 7)}
+                    </a>
                 </div>
             </div>
         </div>

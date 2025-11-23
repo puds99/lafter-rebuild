@@ -1,0 +1,159 @@
+AGENT: Viral Challenge Legal Specialist
+RESEARCH DATE: November 23, 2025
+
+## EXECUTIVE SUMMARY
+
+Viral challenges involving multi-user content combination operate in a complex legal landscape governed primarily by platform Terms of Service, implied consent through feature enablement, and copyright law. The TikTok Duet model provides the most established framework, relying on opt-in settings as presumptive consent for content combination. Key considerations include derivative works rights, partial takedown scenarios, and the need for explicit collaboration agreements when content extends beyond platform boundaries.
+
+## MULTI-USER CONTENT RIGHTS
+
+### Ownership Structure
+- Original creators retain copyright to their individual contributions
+- Combined/derivative works create new copyright interests
+- Platform Terms of Service grant broad licenses enabling combination features
+- Users grant platforms "unconditional irrevocable, non-exclusive, royalty-free, fully transferable, perpetual worldwide license" to use, modify, adapt, and create derivative works
+
+### Opt-Out Scenarios
+- Once content is incorporated into a challenge/duet, removal of original doesn't affect existing derivatives
+- TikTok model: "If you allow others to Duet with your video but then change your settings or delete your video, any existing Duets that have already been made will remain on TikTok"
+- No unified system for partial takedowns where one participant wants removal from combined content
+- DMCA counternotice process available but impractical for viral content (2-week delay)
+
+## TIKTOK DUET MODEL
+
+### Legal Framework
+- Features like Duet/Stitch permitted under platform ToS without direct consent requirement
+- "Through-to-the-Audience Rights" - users have no rights against third parties who use content via platform services
+- Privacy settings act as consent mechanism:
+  * Everyone (public consent)
+  * Friends only (limited consent)
+  * Only you (no consent)
+
+### Consent Mechanism
+- Presumption of consent from having Duets enabled provides legal protection
+- Public account requirement for Duet participation
+- Settings control prospective use only - existing duets remain after settings change
+- Creator of duet controls privacy/distribution of combined work
+
+## CHALLENGE PARTICIPATION = CONSENT
+
+### Implicit Consent Language Needed:
+"By participating in this challenge and using designated hashtags/features, you grant permission for your content to be combined with other participants' submissions for challenge compilation videos. You retain ownership of your original submission."
+
+### Explicit vs Implicit Consent:
+- **Implicit**: Enabled through feature settings (Duet on/off), hashtag use, challenge participation
+- **Explicit**: Required for commercial use, off-platform distribution, or extended licensing
+- Platform ToS provides baseline consent but may not cover all use cases
+- Challenges using content beyond platform require additional agreements
+
+### Recommended Consent Hierarchy:
+1. Platform ToS (baseline)
+2. Feature settings (Duet/Stitch enabled)
+3. Challenge participation (hashtag use)
+4. Explicit opt-in for commercial/extended use
+
+## PARTIAL TAKEDOWN SCENARIOS
+
+### User A Wants Out, Users B/C Don't:
+- **Current Reality**: No established mechanism for partial removal from combined works
+- **Platform Response**: Typically all-or-nothing (entire video removed or retained)
+- **Legal Complexity**: Each participant may have copyright interest in combined work
+
+### Solutions:
+1. **Time-Limited Challenges**: Set expiration dates for challenge compilations
+2. **Modular Architecture**: Store individual submissions separately, dynamically combine
+3. **Opt-Out Registry**: Maintain list of users requesting removal, exclude from future compilations
+4. **Version Control**: Create new versions excluding opted-out participants
+5. **Clear Exit Terms**: Define in challenge rules what happens if participant withdraws
+
+## RECOMMENDED FRAMEWORK
+
+### 1. Pre-Challenge Setup
+- Define ownership structure upfront
+- Establish clear participation terms
+- Set time limits for challenge duration
+- Specify commercial vs non-commercial use
+
+### 2. During Challenge
+- Use platform-native features when possible (inherit their legal framework)
+- Require hashtag acknowledgment of terms
+- Maintain individual submission records
+- Track consent status per participant
+
+### 3. Post-Challenge Management
+- Honor opt-out requests for future use
+- Maintain existing compilations per platform policy
+- Provide attribution to all participants
+- Handle DMCA notices promptly
+
+### 4. Content Architecture
+- Store original submissions separately
+- Create compilations dynamically when possible
+- Maintain version history
+- Enable granular removal capabilities
+
+### 5. Risk Mitigation
+- Obtain explicit consent for commercial use
+- Use platform commercial music libraries only
+- Avoid dangerous/harmful challenge themes
+- Implement content moderation protocols
+
+## CHALLENGE TOS ADDENDUM
+
+### Additional Terms for Lafter.org Challenges:
+
+**1. Challenge Participation Agreement**
+By participating in Lafter challenges (including but not limited to "Laugh Chain" challenges):
+- You grant Lafter a non-exclusive, royalty-free license to combine your submission with other participants' content
+- You understand combined content may remain available even if you delete your original
+- You retain copyright to your individual contribution
+- You warrant you have rights to all content in your submission
+
+**2. Combination Rights**
+- Lafter may create derivative works combining multiple submissions
+- Combined works constitute new creative expressions with shared attribution
+- Individual submissions remain property of original creators
+- Platform features (duets, stitches) operate under respective platform terms
+
+**3. Opt-Out Provisions**
+- You may request exclusion from future challenge compilations via [opt-out mechanism]
+- Existing compilations created before opt-out request may remain available
+- Removal requests processed within 72 hours for future content
+- Emergency removal available for safety/legal concerns
+
+**4. Attribution & Credits**
+- All participants receive attribution in combined works
+- Username/handle displayed unless anonymity requested
+- Links to original submissions maintained where technically feasible
+- Equal prominence given to all contributors
+
+**5. Commercial Use**
+- Non-commercial challenge participation does not grant commercial rights
+- Separate agreement required for advertising/promotional use
+- Revenue sharing terms specified per commercial challenge
+- Participants notified of commercial intent before submission
+
+**6. Liability & Indemnification**
+- Participants responsible for their content's legality
+- Lafter not liable for other participants' contributions
+- Users indemnify platform against claims arising from submissions
+- Safe harbor provisions per DMCA apply
+
+**7. Dispute Resolution**
+- Content disputes handled via platform dispute system
+- Copyright claims processed per DMCA procedures
+- Opt-out requests: support@lafter.org
+- 30-day resolution timeline for non-urgent matters
+
+**8. Platform Integration**
+- Cross-platform challenges subject to most restrictive platform's terms
+- Native platform features used where available
+- Third-party content subject to original platform license
+- API terms compliance required for automated collection
+
+### Implementation Notes:
+- Display terms prominently before challenge participation
+- Require affirmative consent action (checkbox/button)
+- Maintain consent records with timestamps
+- Version control for terms updates
+- Grandfathering provisions for existing challenges

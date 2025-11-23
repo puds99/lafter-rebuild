@@ -1,0 +1,211 @@
+AGENT: Terms of Service Specialist
+RESEARCH DATE: November 23, 2025
+
+## EXECUTIVE SUMMARY
+
+Based on comprehensive research of major social media platforms (TikTok, Instagram, Twitter/X) and content-sharing services, this document provides ready-to-use Terms of Service language specifically tailored for Lafter.org's audio content platform. The clauses balance platform operational needs with user rights, including explicit takedown provisions that allow users to maintain control over their content while granting Lafter necessary licenses to operate the service effectively.
+
+Key features:
+- Non-exclusive license preserves user ownership
+- Explicit takedown rights with clear timelines
+- Plain language alternatives for user comprehension
+- DMCA compliance framework
+- Revenue sharing clarity
+
+## KEY CLAUSES NEEDED
+
+1. **Content License Grant** - Broad enough to operate the service, specific enough to maintain trust
+2. **Usage Rights** - Clear delineation of how Lafter can use user laughs in viral content
+3. **Revocation/Takedown Rights** - User-friendly removal process with defined timelines
+4. **Privacy Integration** - Connection to privacy policy for data handling
+5. **Content Ownership** - Clear statement that users retain ownership
+6. **Third-Party Rights** - Protection against copyright infringement claims
+7. **Monetization Terms** - Clear terms about revenue and commercial use
+8. **Termination Effects** - What happens to content when account is deleted
+
+## SAMPLE LANGUAGE (READY TO USE)
+
+### Content License
+
+"By uploading, posting, or submitting any audio content, including but not limited to laughs, voice recordings, or other sounds ('Your Content') to Lafter, you grant Lafter and its affiliates a non-exclusive, royalty-free, transferable, sublicensable, worldwide license to use, host, store, cache, reproduce, publish, display (publicly or otherwise), perform (publicly or otherwise), distribute, transmit, modify, adapt, create derivative works of, and otherwise exploit Your Content in connection with the Service, including for promotional and marketing purposes, and to permit other users to access, view, listen to, and share Your Content.
+
+This license includes the right to:
+- Include Your Content in compilations, viral videos, and other collective works
+- Synchronize Your Content with visual content created by Lafter or other users
+- Use Your Content to train and improve our audio recognition and categorization systems
+- Share Your Content across Lafter's social media channels and partner platforms
+
+You retain all ownership rights in Your Content. This license does not grant Lafter any ownership of Your Content, and you may continue to use Your Content for any purpose."
+
+### Usage Rights
+
+"You grant Lafter a perpetual, irrevocable license to use Your Content for the following specific purposes even after deletion:
+- Maintaining copies in backup systems for up to 90 days
+- Retaining Content that has been incorporated into derivative works created before your deletion request
+- Preserving Content subject to legal holds or government requests
+- Using anonymized or aggregated data derived from Your Content for analytics and service improvement
+
+For all other uses, the license terminates when you delete Your Content or your account, subject to the deletion timeline described in Section [X]."
+
+### Takedown Rights
+
+"You may request removal of Your Content at any time through the following methods:
+
+**Individual Content Removal:**
+- Use the 'Delete' button on any of your uploads
+- Content will be removed from public view immediately
+- Complete removal from all systems within 30 days
+
+**Account Deletion:**
+- Request account deletion through Settings > Account > Delete Account
+- All Your Content becomes inaccessible to other users within 24 hours
+- Complete deletion process takes up to 90 days
+
+**Special Takedown Request:**
+If Your Content has been used in viral compilations or derivative works, you may submit a takedown request to: takedown@lafter.org. We will:
+- Acknowledge receipt within 48 hours
+- Remove the content from active distribution within 7 business days
+- Note: Content already downloaded or shared by users before takedown may remain in circulation
+
+**DMCA Takedown:**
+If you believe your copyrighted work has been used without permission, follow our DMCA procedure outlined in Section [X]."
+
+### Revenue and Monetization
+
+"Lafter may generate revenue through advertising, sponsorships, and partnerships involving content that includes Your Content. Unless you have entered into a separate Creator Agreement with Lafter:
+- You are not entitled to any revenue generated from Your Content
+- You may not claim monetization rights on third-party platforms for Lafter-created derivative works
+- You retain the right to monetize your original Content on other platforms
+
+If you are part of the Lafter Creator Program, revenue sharing terms will be governed by the separate Creator Agreement."
+
+### Third-Party Rights and Representations
+
+"By uploading Your Content, you represent and warrant that:
+- You own or have all necessary rights to grant the licenses described herein
+- Your Content does not infringe any third party's rights, including copyright, trademark, or privacy rights
+- If Your Content includes other people's voices or performances, you have obtained their consent
+- Your Content complies with all applicable laws and regulations
+
+You agree to indemnify and hold Lafter harmless from any claims arising from Your Content or breach of these representations."
+
+## WHAT MAJOR APPS USE
+
+### TikTok Exact Language:
+"By posting User Content to or through the Services, you grant to us an unconditional irrevocable, non-exclusive, royalty-free, fully transferable, perpetual worldwide licence to use, modify, adapt, reproduce, make derivative works of, publish and/or transmit, and/or distribute and to authorise others users of the Services and other third-parties to view, access, use, download, modify, adapt, reproduce, make derivative works of, publish and/or transmit your User Content in any format and on any platform, either now known or hereinafter invented."
+
+Key TikTok Provisions:
+- Retains "some remnants like shared or derivative works" even after deletion
+- No right to revenue sharing unless in Creator Fund
+- Cannot claim monetization on other platforms for TikTok content
+
+### Instagram Exact Language:
+"You grant to us a non-exclusive, royalty-free, transferable, sub-licensable, worldwide license to host, use, distribute, modify, run, copy, publicly perform or display, translate, and create derivative works of your content (consistent with your privacy and application settings)."
+
+Key Instagram Provisions:
+- License ends when content is deleted (not perpetual for all uses)
+- 30-day deletion request processing, 90 days for complete removal
+- Can sublicense to third parties without permission or payment
+
+### Twitter/X Language:
+"You retain ownership and rights to any of your Content you post or share, and you provide us with a broad, royalty-free license to make your Content available to the rest of the world and to let others do the same... This includes the right for us to make your Content available to other companies, organizations or individuals for the syndication, broadcast, distribution, promotion or publication."
+
+## PLAIN LANGUAGE VERSION
+(for in-app display)
+
+**What happens when you upload your laugh?**
+
+✅ **You keep ownership** - Your laugh is still yours!
+
+✅ **We can use it** - We need permission to:
+- Play it for other users
+- Include it in funny compilations
+- Share it on our social media
+- Make the app work properly
+
+✅ **You can delete it** - Remove your content anytime:
+- Individual laughs: Gone immediately from view, fully deleted in 30 days
+- Everything: Delete your account and all content goes away within 90 days
+
+❌ **What we DON'T do:**
+- We don't own your content
+- We don't sell your individual content to others
+- We don't prevent you from using your laugh elsewhere
+
+⚠️ **Important:**
+- We might make money from ads shown near your content
+- If your laugh goes viral, it might stay in compilations already shared
+- Always get permission before recording others!
+
+**Questions?** Email us at legal@lafter.org
+
+## LEGAL REVIEW NOTES
+
+### What a lawyer should check:
+
+1. **Jurisdiction-Specific Requirements**
+   - Ensure compliance with state privacy laws (CCPA, etc.)
+   - Review against FTC guidelines for plain language
+   - Verify COPPA compliance if users under 13 are permitted
+
+2. **License Scope Review**
+   - Confirm "derivative works" definition is appropriate for audio content
+   - Review sublicensing rights for potential partnerships
+   - Ensure "perpetual" vs. termination provisions are clear and non-contradictory
+
+3. **DMCA Compliance**
+   - Verify proper DMCA agent designation with Copyright Office
+   - Ensure counter-notice procedures are included
+   - Add repeat infringer policy
+
+4. **Liability Limitations**
+   - Add limitation of liability clause
+   - Include indemnification provisions
+   - Review warranty disclaimers
+
+5. **Special Considerations for Audio**
+   - Voice biometric data regulations (Illinois BIPA, etc.)
+   - Performance rights organizations (PRO) considerations
+   - Synchronization rights for video use
+
+6. **Additional Clauses Needed**
+   - Arbitration/dispute resolution
+   - Choice of law and venue
+   - Severability
+   - Entire agreement
+   - Modification procedures
+   - Age restrictions/parental consent
+
+7. **Platform-Specific Risks**
+   - Viral content attribution requirements
+   - Creator program terms integration
+   - API/developer terms if applicable
+   - Community guidelines incorporation
+
+8. **Data Protection Integration**
+   - Ensure TOS aligns with Privacy Policy
+   - GDPR compliance for EU users
+   - Data retention policies consistency
+   - Cross-border data transfer provisions
+
+### Recommended Legal Actions:
+
+1. Have lawyer draft formal version incorporating above elements
+2. Create separate Creator Agreement for monetized users
+3. Implement click-wrap agreement for TOS acceptance
+4. Set up DMCA agent registration
+5. Create internal content takedown procedures
+6. Document retention and deletion protocols
+7. Consider insurance for copyright infringement claims
+8. Regular review cycle (minimum annual) for TOS updates
+
+### Risk Mitigation Strategies:
+
+- Implement robust content moderation to catch violations early
+- Create clear community guidelines referenced in TOS
+- Maintain detailed logs of user consent and TOS version acceptance
+- Build technical systems to honor deletion requests within stated timeframes
+- Consider watermarking for attribution in viral content
+- Establish clear appeals process for content removals
+
+END OF DOCUMENT
