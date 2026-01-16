@@ -24,7 +24,7 @@ export interface Profile {
 export const DEFAULT_SETTINGS: UserSettings = {
     theme: 'system',
     audio: {
-        threshold: 20,
+        threshold: 55,
         inputDeviceId: 'default',
         noiseSuppression: true
     },

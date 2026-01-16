@@ -34,8 +34,8 @@ const VOLUME_SMOOTHING = 0.8;
 const VOLUME_UPDATE_INTERVAL = 100; // ms
 
 // LAUGH DETECTION V3.0 (Hybrid: Volume + AI)
-const LAUGH_DURATION_MIN = 100;     // 100ms - catches any burst
-const LAUGH_COOLDOWN = 500;         // 500ms - rapid detection allowed
+const LAUGH_DURATION_MIN = 300;     // 300ms - must be sustained
+const LAUGH_COOLDOWN = 1500;        // 1.5s - prevent spam counting
 
 /**
  * Safari-compatible MIME type selection
