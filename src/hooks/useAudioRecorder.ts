@@ -305,12 +305,12 @@ export function useAudioRecorder(): AudioRecorderReturn {
             }, 100);
 
             // Start volume monitoring AND laugh detection
-            volumeIntervalRef.current = window.setInterval(() => {
+            volumeIntervalRef.current = window.setInterval(async () => {
                 const volume = calculateVolume();
                 setState(prev => ({ ...prev, volume }));
 
                 // V3.0: Hybrid Detection
-                detectLaugh(volume);
+                await detectLaugh(volume);
             }, VOLUME_UPDATE_INTERVAL);
 
             // Reset laugh detection for new session
